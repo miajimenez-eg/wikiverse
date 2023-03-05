@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Page } from './Page';
+import apiURL from '../api';
 
 export const PagesList = ({pages}) => {
 
@@ -11,19 +12,19 @@ export const PagesList = ({pages}) => {
 		setSelectedPage(data);
 	}
 
-	const handleBackClick = async () => {
+	const handleBackClick = () => {
 		setSelectedPage(null);
 	}
 
 	return (
 		<>
 		  {selectedPage ? (
-			<Page page={selectedPage} onBackClick={handleBackClick} />
+			<Page page={pages.find((page) => page.slug === selectedPage)} onBackClick={handleBackClick} />
 		  ) : (
 			pages.map((page, idx) => (
-				<>
-			  <Page page={page} key={idx} onPageClick={handlePageClick} />
-			  </>
+			  <div key={idx} onClick={() => handlePageClick(page.slug)}>
+			    <h2>{page.title}</h2>
+			  </div>
 			))
 		  )}
 		</>
