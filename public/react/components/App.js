@@ -7,6 +7,8 @@ import apiURL from '../api';
 export const App = () => {
 
 	const [pages, setPages] = useState([]);
+	const [selectedPage, setSelectedPage] = useState('');
+	
 
 	async function fetchPages(){
 		try {
@@ -18,15 +20,44 @@ export const App = () => {
 		}
 	}
 
+	const handlePageClick = async (index) => {
+		const slug = pages[index].slug;
+		console.log(slug);
+		const res = await fetch(`${apiURL}/wiki/${slug}`);
+		const data = await res.json();
+		console.log(data);
+		setSelectedPage(data);
+	}
+
+	// const handleBackClick = () => {
+	// 	setSelectedPage('');
+	// }
+
 	useEffect(() => {
 		fetchPages();
 	}, []);
 
-	return (
-		<main>	
-      <h1>WikiVerse</h1>
-			<h2>An interesting 📚</h2>
-			<PagesList pages={pages} />
-		</main>
-	)
+	if(selectedPage === ''){
+		return (
+			<main>	
+		  <h1>WikiVerse</h1>
+				<h2>An interesting 📚</h2>
+				<PagesList pages={pages} handlePageClick={handlePageClick} />
+			</main>
+		)
+	} else if(selectedPage !== ''){
+		return <>
+			<main>
+			  	<h2>{selectedPage.title}</h2>
+			  	<h3>Author: {selectedPage.author}</h3>
+			  	<p>{selectedPage.content}</p>
+			  	<p>Tags: {selectedPage.tags}</p>
+			  	<p>Published: {new Date(selectedPage.createdAt).toDateString()}</p>
+			  	<button onClick={selectedPage.onBackClick}>Back to Articles</button>
+			</main>
+			</>
+		
+	}
+
+	
 }
